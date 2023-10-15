@@ -15,5 +15,5 @@ class TPS_GAME_API ATPSGameModeBase : public AGameModeBase
     GENERATED_BODY()
 
 public:
-    void TestF();
+    ATPSGameModeBase();
 };

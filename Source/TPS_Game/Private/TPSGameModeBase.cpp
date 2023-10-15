@@ -2,14 +2,12 @@
 
 #include "TPSGameModeBase.h"
 
-void ATPSGameModeBase::TestF()
+#include "Player/TPSBaseCharacter.h"
+#include "Player/TPSPlayerController.h"
+
+
+ATPSGameModeBase::ATPSGameModeBase()
 {
-    int32 Var = 0;
-    if (Var < 30)
-    {
-        for (int32 i = 0; i < 10; i++)
-        {
-            UE_LOG(LogTemp, Warning, TEXT("Err"));
-        }
-    }
+    DefaultPawnClass = ATPSBaseCharacter::StaticClass();
+    PlayerControllerClass = ATPSPlayerController::StaticClass();
 }
