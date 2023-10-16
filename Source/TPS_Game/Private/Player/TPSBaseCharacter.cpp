@@ -4,7 +4,12 @@
 #include "Camera/CameraComponent.h"
 #include "Components/InputComponent.h"
 #include "Components/TPSCharacterMovementComponent.h"
+#include "Components/TPSHealthComponent.h"
+#include "Components/TextRenderComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "GameFramework/Controller.h"
+
+DEFINE_LOG_CATEGORY_STATIC(LogBaseCharacter, All, All)
 
 // Sets default values
 ATPSBaseCharacter::ATPSBaseCharacter(const FObjectInitializer& ObjInit)
@@ -19,11 +24,26 @@ ATPSBaseCharacter::ATPSBaseCharacter(const FObjectInitializer& ObjInit)
 
     CameraComponent = CreateDefaultSubobject<UCameraComponent>("CameraComponent");
     CameraComponent->SetupAttachment(SpringArmComponent);
+
+    HealthComponent = CreateDefaultSubobject<UTPSHealthComponent>("HealthComponent");
+
+    HealthTextComponent = CreateDefaultSubobject<UTextRenderComponent>("HealthTextComponent");
+    HealthTextComponent->SetupAttachment(GetRootComponent());
+
+    LandedDelegate.AddDynamic(this, &ATPSBaseCharacter::OnGroundLanded);
 }
 
 void ATPSBaseCharacter::BeginPlay()
 {
     Super::BeginPlay();
+
+    check(HealthComponent);
+    check(HealthTextComponent);
+    check(GetCharacterMovement());
+
+    OnHealthChanged(HealthComponent->GetHealth());
+    HealthComponent->OnDeath.AddUObject(this, &ATPSBaseCharacter::OnDeath);
+    HealthComponent->OnHealthChanged.AddUObject(this, &ATPSBaseCharacter::OnHealthChanged);
 }
 
 void ATPSBaseCharacter::Tick(float DeltaTime)
@@ -34,6 +54,8 @@ void ATPSBaseCharacter::Tick(float DeltaTime)
 void ATPSBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
     Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+    check(PlayerInputComponent);
 
     PlayerInputComponent->BindAxis("MoveForward", this, &ATPSBaseCharacter::MoveForward);
     PlayerInputComponent->BindAxis("MoveRight", this, &ATPSBaseCharacter::MoveRight);
@@ -85,4 +107,38 @@ void ATPSBaseCharacter::OnStartRunnig()
 void ATPSBaseCharacter::OnStopRunnig()
 {
     bWantsToRun = false;
+}
+
+void ATPSBaseCharacter::OnDeath()
+{
+    UE_LOG(LogBaseCharacter, Display, TEXT("Player %s is dead"), *GetName());
+
+    PlayAnimMontage(DeathAnimMontage);
+
+    GetCharacterMovement()->DisableMovement();
+
+    SetLifeSpan(LifeSpanOnDeath);
+
+    if (Controller)
+    {
+        Controller->ChangeState(NAME_Spectating);
+    }
+}
+
+void ATPSBaseCharacter::OnHealthChanged(float Health)
+{
+    HealthTextComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), Health)));
+}
+
+void ATPSBaseCharacter::OnGroundLanded(const FHitResult& Hit) 
+{
+    const auto FallVelocityZ = -GetVelocity().Z;
+    UE_LOG(LogBaseCharacter, Display, TEXT("On Landed: %f"), FallVelocityZ);
+
+    if (FallVelocityZ < LandedDamageVelocity.X)
+        return;
+
+    const auto FinalDamage = FMath::GetMappedRangeValueClamped(LandedDamageVelocity, LandedDamage, FallVelocityZ);
+    UE_LOG(LogBaseCharacter, Display, TEXT("FinalDamage: %f"), FinalDamage);
+    TakeDamage(FinalDamage, FDamageEvent{}, nullptr, nullptr);
 }
