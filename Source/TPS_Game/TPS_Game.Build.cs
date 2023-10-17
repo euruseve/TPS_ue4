@@ -15,7 +15,8 @@ public class TPS_Game : ModuleRules
         PublicIncludePaths.AddRange(new string[]
         { "TPS_Game/Public/Player",
           "TPS_Game/Public/Components",
-          "TPS_Game/Public/Dev"
+          "TPS_Game/Public/Dev",
+          "TPS_Game/Public/Weapon"
         });
 
         // Uncomment if you are using Slate UI

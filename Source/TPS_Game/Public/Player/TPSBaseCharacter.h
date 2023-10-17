@@ -10,6 +10,8 @@ class UCameraComponent;
 class USpringArmComponent;
 class UTPSHealthComponent;
 class UTextRenderComponent;
+class ATPSBaseWeapon;
+
 
 UCLASS()
 class TPS_GAME_API ATPSBaseCharacter : public ACharacter
@@ -44,6 +46,9 @@ protected:
     UPROPERTY(EditDefaultsOnly, Category = "Damage")
     FVector2D LandedDamage = FVector2D(10.f, 100.f);
 
+    UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+    TSubclassOf<ATPSBaseWeapon> WeaponClass;
+
     virtual void BeginPlay() override;
 
 public:
@@ -72,4 +77,6 @@ private:
 
     UFUNCTION()
     void OnGroundLanded(const FHitResult& Hit);
+
+    void SpawnWeapon();
 };

@@ -8,6 +8,7 @@
 #include "Components/TextRenderComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/Controller.h"
+#include "Weapon/TPSBaseWeapon.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogBaseCharacter, All, All)
 
@@ -44,6 +45,8 @@ void ATPSBaseCharacter::BeginPlay()
     OnHealthChanged(HealthComponent->GetHealth());
     HealthComponent->OnDeath.AddUObject(this, &ATPSBaseCharacter::OnDeath);
     HealthComponent->OnHealthChanged.AddUObject(this, &ATPSBaseCharacter::OnHealthChanged);
+
+    SpawnWeapon();
 }
 
 void ATPSBaseCharacter::Tick(float DeltaTime)
@@ -141,4 +144,17 @@ void ATPSBaseCharacter::OnGroundLanded(const FHitResult& Hit)
     const auto FinalDamage = FMath::GetMappedRangeValueClamped(LandedDamageVelocity, LandedDamage, FallVelocityZ);
     UE_LOG(LogBaseCharacter, Display, TEXT("FinalDamage: %f"), FinalDamage);
     TakeDamage(FinalDamage, FDamageEvent{}, nullptr, nullptr);
+}
+
+void ATPSBaseCharacter::SpawnWeapon() 
+{
+    if (!GetWorld())
+        return;
+
+    const auto Weapon = GetWorld()->SpawnActor<ATPSBaseWeapon>(WeaponClass);
+    if (Weapon)
+    {
+        FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, false);
+        Weapon->AttachToComponent(GetMesh(), AttachmentRules, "WeaponSocket");
+    }
 }
