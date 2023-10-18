@@ -10,7 +10,7 @@ class UCameraComponent;
 class USpringArmComponent;
 class UTPSHealthComponent;
 class UTextRenderComponent;
-class ATPSBaseWeapon;
+class UTPSWeaponComponent;
 
 
 UCLASS()
@@ -34,8 +34,12 @@ protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
     UTextRenderComponent* HealthTextComponent;
 
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+    UTPSWeaponComponent* WeaponComponent;
+
     UPROPERTY(EditDefaultsOnly, Category = "Animation")
     UAnimMontage* DeathAnimMontage;
+
 
     UPROPERTY(EditDefaultsOnly, Category = "Damage")
     float LifeSpanOnDeath = 5.f;
@@ -46,8 +50,6 @@ protected:
     UPROPERTY(EditDefaultsOnly, Category = "Damage")
     FVector2D LandedDamage = FVector2D(10.f, 100.f);
 
-    UPROPERTY(EditDefaultsOnly, Category = "Weapon")
-    TSubclassOf<ATPSBaseWeapon> WeaponClass;
 
     virtual void BeginPlay() override;
 
@@ -78,5 +80,5 @@ private:
     UFUNCTION()
     void OnGroundLanded(const FHitResult& Hit);
 
-    void SpawnWeapon();
+
 };

@@ -5,10 +5,10 @@
 #include "Components/InputComponent.h"
 #include "Components/TPSCharacterMovementComponent.h"
 #include "Components/TPSHealthComponent.h"
+#include "Components/TPSWeaponComponent.h"
 #include "Components/TextRenderComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/Controller.h"
-#include "Weapon/TPSBaseWeapon.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogBaseCharacter, All, All)
 
@@ -22,6 +22,7 @@ ATPSBaseCharacter::ATPSBaseCharacter(const FObjectInitializer& ObjInit)
     SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>("SpringArmComponent");
     SpringArmComponent->SetupAttachment(GetRootComponent());
     SpringArmComponent->bUsePawnControlRotation = true;
+    SpringArmComponent->SocketOffset = FVector(0.f, 100.f, 80.f);
 
     CameraComponent = CreateDefaultSubobject<UCameraComponent>("CameraComponent");
     CameraComponent->SetupAttachment(SpringArmComponent);
@@ -30,6 +31,9 @@ ATPSBaseCharacter::ATPSBaseCharacter(const FObjectInitializer& ObjInit)
 
     HealthTextComponent = CreateDefaultSubobject<UTextRenderComponent>("HealthTextComponent");
     HealthTextComponent->SetupAttachment(GetRootComponent());
+    HealthTextComponent->SetOwnerNoSee(true);
+
+    WeaponComponent = CreateDefaultSubobject<UTPSWeaponComponent>("WeaponComponent");
 
     LandedDelegate.AddDynamic(this, &ATPSBaseCharacter::OnGroundLanded);
 }
@@ -45,8 +49,6 @@ void ATPSBaseCharacter::BeginPlay()
     OnHealthChanged(HealthComponent->GetHealth());
     HealthComponent->OnDeath.AddUObject(this, &ATPSBaseCharacter::OnDeath);
     HealthComponent->OnHealthChanged.AddUObject(this, &ATPSBaseCharacter::OnHealthChanged);
-
-    SpawnWeapon();
 }
 
 void ATPSBaseCharacter::Tick(float DeltaTime)
@@ -59,6 +61,7 @@ void ATPSBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
     Super::SetupPlayerInputComponent(PlayerInputComponent);
 
     check(PlayerInputComponent);
+    check(WeaponComponent);
 
     PlayerInputComponent->BindAxis("MoveForward", this, &ATPSBaseCharacter::MoveForward);
     PlayerInputComponent->BindAxis("MoveRight", this, &ATPSBaseCharacter::MoveRight);
@@ -69,6 +72,7 @@ void ATPSBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
     PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ATPSBaseCharacter::Jump);
     PlayerInputComponent->BindAction("Run", IE_Pressed, this, &ATPSBaseCharacter::OnStartRunnig);
     PlayerInputComponent->BindAction("Run", IE_Released, this, &ATPSBaseCharacter::OnStopRunnig);
+    PlayerInputComponent->BindAction("Fire", IE_Pressed, WeaponComponent, &UTPSWeaponComponent::Fire);
 }
 
 bool ATPSBaseCharacter::IsRunning() const
@@ -133,7 +137,7 @@ void ATPSBaseCharacter::OnHealthChanged(float Health)
     HealthTextComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), Health)));
 }
 
-void ATPSBaseCharacter::OnGroundLanded(const FHitResult& Hit) 
+void ATPSBaseCharacter::OnGroundLanded(const FHitResult& Hit)
 {
     const auto FallVelocityZ = -GetVelocity().Z;
     UE_LOG(LogBaseCharacter, Display, TEXT("On Landed: %f"), FallVelocityZ);
@@ -144,17 +148,4 @@ void ATPSBaseCharacter::OnGroundLanded(const FHitResult& Hit)
     const auto FinalDamage = FMath::GetMappedRangeValueClamped(LandedDamageVelocity, LandedDamage, FallVelocityZ);
     UE_LOG(LogBaseCharacter, Display, TEXT("FinalDamage: %f"), FinalDamage);
     TakeDamage(FinalDamage, FDamageEvent{}, nullptr, nullptr);
-}
-
-void ATPSBaseCharacter::SpawnWeapon() 
-{
-    if (!GetWorld())
-        return;
-
-    const auto Weapon = GetWorld()->SpawnActor<ATPSBaseWeapon>(WeaponClass);
-    if (Weapon)
-    {
-        FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, false);
-        Weapon->AttachToComponent(GetMesh(), AttachmentRules, "WeaponSocket");
-    }
 }
