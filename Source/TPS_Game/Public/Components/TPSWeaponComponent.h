@@ -16,7 +16,8 @@ class TPS_GAME_API UTPSWeaponComponent : public UActorComponent
 public:
     UTPSWeaponComponent();
 
-    void Fire();
+    void StartFire();
+    void StopFire();
 
 protected:
     UPROPERTY(EditDefaultsOnly, Category = "Weapon")

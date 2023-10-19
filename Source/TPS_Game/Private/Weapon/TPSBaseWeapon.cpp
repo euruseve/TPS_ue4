@@ -24,33 +24,11 @@ void ATPSBaseWeapon::BeginPlay()
     check(WeaponMesh);
 }
 
-void ATPSBaseWeapon::Fire()
-{
-    MakeShot();
-}
+void ATPSBaseWeapon::StartFire() {}
 
-void ATPSBaseWeapon::MakeShot()
-{
-    if (!GetWorld())
-        return;
+void ATPSBaseWeapon::StopFire() {}
 
-    FVector TraceStart, TraceEnd;
-    if (!GetTraceData(TraceStart, TraceEnd))
-        return;
-
-    FHitResult HitResult;
-    MakeHit(HitResult, TraceStart, TraceEnd);
-
-    if (HitResult.bBlockingHit)
-    {
-        DrawDebugLine(GetWorld(), GetMuzzleWorldLocation(), HitResult.ImpactPoint, FColor::Orange, false, 3.f, 0, 3.f);
-        DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 10.f, 24, FColor::Red, false, 5.f);
-    }
-    else
-    {
-        DrawDebugLine(GetWorld(), GetMuzzleWorldLocation(), TraceEnd, FColor::Orange, false, 3.f, 0, 3.f);
-    }
-}
+void ATPSBaseWeapon::MakeShot() {}
 
 APlayerController* ATPSBaseWeapon::GetPlayerController() const
 {
@@ -85,6 +63,7 @@ bool ATPSBaseWeapon::GetTraceData(FVector& TraceStart, FVector& TraceEnd) const
         return false;
 
     TraceStart = ViewLocation;
+
     const FVector ShootDirection = ViewRotation.Vector();
     TraceEnd = TraceStart + ShootDirection * TraceMaxDistance;
     return true;
@@ -100,4 +79,14 @@ void ATPSBaseWeapon::MakeHit(FHitResult& HitResult, const FVector& TraceStart, c
 
     GetWorld()->LineTraceSingleByChannel(
         HitResult, TraceStart, TraceEnd, ECollisionChannel::ECC_Visibility, CollisionParams);
+}
+
+void ATPSBaseWeapon::MakeDamage(FHitResult& HitResult)
+{
+    const auto DamageActor = HitResult.GetActor();
+
+    if (!DamageActor)
+        return;
+
+    DamageActor->TakeDamage(DamageAmount, FDamageEvent(), GetPlayerController(), this);
 }

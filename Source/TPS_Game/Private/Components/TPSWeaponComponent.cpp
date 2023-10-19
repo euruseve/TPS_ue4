@@ -34,10 +34,18 @@ void UTPSWeaponComponent::SpawnWeapon()
     CurrentWeapon->SetOwner(Character);
 }
 
-void UTPSWeaponComponent::Fire() 
+void UTPSWeaponComponent::StartFire() 
 {
     if (!CurrentWeapon)
         return;
 
-    CurrentWeapon->Fire();
+    CurrentWeapon->StartFire();
+}
+
+void UTPSWeaponComponent::StopFire() 
+{
+    if (!CurrentWeapon)
+        return;
+
+    CurrentWeapon->StopFire();
 }

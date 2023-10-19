@@ -16,7 +16,8 @@ class TPS_GAME_API ATPSBaseWeapon : public AActor
 public:
     ATPSBaseWeapon();
 
-    virtual void Fire();
+    virtual void StartFire();
+    virtual void StopFire();
 
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
@@ -28,7 +29,14 @@ protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
     float TraceMaxDistance = 1500.f;
 
-    void MakeShot();
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+    float DamageAmount = 10.f;
+
+    virtual void BeginPlay() override;
+
+    virtual void MakeShot();
+
+    virtual bool GetTraceData(FVector& TraceStart, FVector& TraceEnd) const;
 
     APlayerController* GetPlayerController() const;
 
@@ -36,9 +44,7 @@ protected:
 
     FVector GetMuzzleWorldLocation() const;
 
-    bool GetTraceData(FVector& TraceStart, FVector& TraceEnd) const;
-
     void MakeHit(FHitResult& HitResult, const FVector& TraceStart, const FVector& TraceEnd);
 
-    virtual void BeginPlay() override;
+    void MakeDamage(FHitResult& HitResult);
 };
