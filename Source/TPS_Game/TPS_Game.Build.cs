@@ -17,7 +17,8 @@ public class TPS_Game : ModuleRules
           "TPS_Game/Public/Components",
           "TPS_Game/Public/Dev",
           "TPS_Game/Public/Weapon",
-          "TPS_Game/Public/UI"
+          "TPS_Game/Public/UI",
+          "TPS_Game/Public/Animations"
         });
 
         // Uncomment if you are using Slate UI

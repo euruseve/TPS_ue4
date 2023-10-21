@@ -75,6 +75,7 @@ void ATPSBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
     PlayerInputComponent->BindAction("Run", IE_Released, this, &ATPSBaseCharacter::OnStopRunnig);
     PlayerInputComponent->BindAction("Fire", IE_Pressed, WeaponComponent, &UTPSWeaponComponent::StartFire);
     PlayerInputComponent->BindAction("Fire", IE_Released, WeaponComponent, &UTPSWeaponComponent::StopFire);
+    PlayerInputComponent->BindAction("NextWeapon", IE_Pressed, WeaponComponent, &UTPSWeaponComponent::NextWeapon);
 }
 
 bool ATPSBaseCharacter::IsRunning() const
@@ -134,6 +135,7 @@ void ATPSBaseCharacter::OnDeath()
     }
 
     GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+    WeaponComponent->StopFire();
 }
 
 void ATPSBaseCharacter::OnHealthChanged(float Health)
