@@ -81,12 +81,3 @@ void ATPSBaseWeapon::MakeHit(FHitResult& HitResult, const FVector& TraceStart, c
         HitResult, TraceStart, TraceEnd, ECollisionChannel::ECC_Visibility, CollisionParams);
 }
 
-void ATPSBaseWeapon::MakeDamage(FHitResult& HitResult)
-{
-    const auto DamageActor = HitResult.GetActor();
-
-    if (!DamageActor)
-        return;
-
-    DamageActor->TakeDamage(DamageAmount, FDamageEvent(), GetPlayerController(), this);
-}

@@ -1,19 +1,34 @@
-// Third Person Shooter. All Rights Reserved. 
-
+// Third Person Shooter. All Rights Reserved.
 
 #include "Weapon/TPSLauncherWeapon.h"
 #include "Weapon/TPSProjectile.h"
-#include "Kismet/GameplayStatics.h"
 
 void ATPSLauncherWeapon::StartFire()
 {
     MakeShot();
 }
 
-void ATPSLauncherWeapon::MakeShot() 
+void ATPSLauncherWeapon::MakeShot()
 {
-    const FTransform SpawnTransform = FTransform(FRotator::ZeroRotator, GetMuzzleWorldLocation());
-    auto Projectile = UGameplayStatics::BeginDeferredActorSpawnFromClass(GetWorld(), ProjectileClass, SpawnTransform);
+    if (!GetWorld())
+        return;
 
-    UGameplayStatics::FinishSpawningActor(Projectile, SpawnTransform);
+    FVector TraceStart, TraceEnd;
+    if (!GetTraceData(TraceStart, TraceEnd))
+        return;
+
+    FHitResult HitResult;
+    MakeHit(HitResult, TraceStart, TraceEnd);
+
+    const FVector EndPoint = HitResult.bBlockingHit ? HitResult.ImpactPoint : TraceEnd;
+    const FVector Direction = (EndPoint - GetMuzzleWorldLocation()).GetSafeNormal();
+
+    const FTransform SpawnTransform = FTransform(FRotator::ZeroRotator, GetMuzzleWorldLocation());
+    ATPSProjectile* Projectile = GetWorld()->SpawnActorDeferred<ATPSProjectile>(ProjectileClass, SpawnTransform);
+    if (Projectile)
+    {
+        Projectile->SetShotDirection(Direction);
+        Projectile->SetOwner(GetOwner());
+        Projectile->FinishSpawning(SpawnTransform);
+    }
 }
