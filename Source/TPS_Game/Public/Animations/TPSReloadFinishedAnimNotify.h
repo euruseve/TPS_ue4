@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Animations/TPSAnimNotify.h"
-#include "TPSEquipFinishedAnimNotify.generated.h"
+#include "TPSReloadFinishedAnimNotify.generated.h"
 
 UCLASS()
-class TPS_GAME_API UTPSEquipFinishedAnimNotify : public UTPSAnimNotify
+class TPS_GAME_API UTPSReloadFinishedAnimNotify : public UTPSAnimNotify
 {
     GENERATED_BODY()
 };

@@ -4,10 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "TPSCoreTypes.h"
 #include "TPSHealthComponent.generated.h"
 
-DECLARE_MULTICAST_DELEGATE(FOnDeath)
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnHealthChanged, float)
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class TPS_GAME_API UTPSHealthComponent : public UActorComponent

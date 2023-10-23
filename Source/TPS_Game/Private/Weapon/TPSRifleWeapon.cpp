@@ -8,8 +8,8 @@
 
 void ATPSRifleWeapon::StartFire()
 {
-    MakeShot();
     GetWorldTimerManager().SetTimer(ShotTimerHandle, this, &ATPSRifleWeapon::MakeShot, TimeBetweenShots, true);
+    MakeShot();
 }
 
 void ATPSRifleWeapon::StopFire()
@@ -19,12 +19,18 @@ void ATPSRifleWeapon::StopFire()
 
 void ATPSRifleWeapon::MakeShot()
 {
-    if (!GetWorld())
+    if (!GetWorld() || IsAmmoEmpty())
+    {
+        StopFire();
         return;
+    }
 
     FVector TraceStart, TraceEnd;
     if (!GetTraceData(TraceStart, TraceEnd))
+    {
+        StopFire();
         return;
+    }
 
     FHitResult HitResult;
     MakeHit(HitResult, TraceStart, TraceEnd);
@@ -39,6 +45,9 @@ void ATPSRifleWeapon::MakeShot()
     {
         DrawDebugLine(GetWorld(), GetMuzzleWorldLocation(), TraceEnd, FColor::Orange, false, 3.f, 0, 3.f);
     }
+
+
+    DecreaseAmmo();
 }
 
 bool ATPSRifleWeapon::GetTraceData(FVector& TraceStart, FVector& TraceEnd) const
