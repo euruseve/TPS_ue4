@@ -6,9 +6,6 @@
 #include "GameFramework/HUD.h"
 #include "TPSGameHUD.generated.h"
 
-/**
- *
- */
 UCLASS()
 class TPS_GAME_API ATPSGameHUD : public AHUD
 {
@@ -17,6 +14,12 @@ class TPS_GAME_API ATPSGameHUD : public AHUD
 public:
     virtual void DrawHUD() override;
 
-    private:
+protected:
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
+    TSubclassOf<UUserWidget> PlayerHUDWidgetClass;
+
+    virtual void BeginPlay() override;
+
+private:
     void DrawCrossHair();
 };

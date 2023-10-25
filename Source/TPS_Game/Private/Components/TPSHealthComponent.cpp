@@ -16,6 +16,8 @@ void UTPSHealthComponent::BeginPlay()
 {
     Super::BeginPlay();
 
+    check(MaxHealth > 0);
+
     SetHealth(MaxHealth);
 
     AActor* ComponentOwner = GetOwner();
