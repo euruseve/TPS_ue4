@@ -94,7 +94,6 @@ void ATPSBaseWeapon::DecreaseAmmo()
     }
 
     CurrentAmmo.Bullets--;
-    LogAmmo();
 
     if (!IsAmmoEmpty() && IsClipEmpty())
     {

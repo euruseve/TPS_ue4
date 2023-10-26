@@ -7,8 +7,6 @@
 #include "TPSCoreTypes.h"
 #include "TPSPlayerHUDWidget.generated.h"
 
-class UTPSWeaponComponent;
-
 UCLASS()
 class TPS_GAME_API UTPSPlayerHUDWidget : public UUserWidget
 {
@@ -24,6 +22,10 @@ public:
     UFUNCTION(BlueprintCallable, Category = "UI")
     bool GetCurrentWeaponAmmoData(FAmmoData& AmmoData) const;
 
-private:
-    UTPSWeaponComponent* GetWeaponComponent() const;
+    UFUNCTION(BlueprintCallable, Category = "UI")
+    bool IsPlayerAlive() const;
+
+    UFUNCTION(BlueprintCallable, Category = "UI")
+    bool IsPlayerSpectating() const;
+
 };

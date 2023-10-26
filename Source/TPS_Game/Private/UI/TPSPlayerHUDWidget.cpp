@@ -3,16 +3,11 @@
 #include "UI/TPSPlayerHUDWidget.h"
 #include "Components/TPSHealthComponent.h"
 #include "Components/TPSWeaponComponent.h"
+#include "TPSUtils.h"
 
 float UTPSPlayerHUDWidget::GetHealthPercent() const
 {
-    const auto Player = GetOwningPlayerPawn();
-    if (!Player)
-        return 0.f;
-
-    const auto Component = Player->GetComponentByClass(UTPSHealthComponent::StaticClass());
-
-    const auto HealthComponent = Cast<UTPSHealthComponent>(Component);
+    const auto HealthComponent = TPSUtils::GetTPSPlayerComponent<UTPSHealthComponent>(GetOwningPlayerPawn());
     if (!HealthComponent)
         return 0.f;
 
@@ -21,7 +16,7 @@ float UTPSPlayerHUDWidget::GetHealthPercent() const
 
 bool UTPSPlayerHUDWidget::GetCurrentWeaponUIData(FWeaponUIData& UIData) const
 {
-    const auto WeaponComponent = GetWeaponComponent();
+    const auto WeaponComponent = TPSUtils::GetTPSPlayerComponent<UTPSWeaponComponent>(GetOwningPlayerPawn());
     if (!WeaponComponent)
         return false;
 
@@ -30,22 +25,22 @@ bool UTPSPlayerHUDWidget::GetCurrentWeaponUIData(FWeaponUIData& UIData) const
 
 bool UTPSPlayerHUDWidget::GetCurrentWeaponAmmoData(FAmmoData& AmmoData) const
 {
-    const auto WeaponComponent = GetWeaponComponent();
+    const auto WeaponComponent = TPSUtils::GetTPSPlayerComponent<UTPSWeaponComponent>(GetOwningPlayerPawn());
+    
     if (!WeaponComponent)
         return false;
 
     return WeaponComponent->GetCurrentWeaponAmmoData(AmmoData);
 }
 
-UTPSWeaponComponent* UTPSPlayerHUDWidget::GetWeaponComponent() const
+bool UTPSPlayerHUDWidget::IsPlayerAlive() const
 {
-    const auto Player = GetOwningPlayerPawn();
-    if (!Player)
-        return nullptr;
+    const auto HealthComponent = TPSUtils::GetTPSPlayerComponent<UTPSHealthComponent>(GetOwningPlayerPawn());
+    return HealthComponent && !HealthComponent->IsDead();
+}
 
-    const auto Component = Player->GetComponentByClass(UTPSWeaponComponent::StaticClass());
-
-    const auto WeaponComponent = Cast<UTPSWeaponComponent>(Component);
-
-    return WeaponComponent;
+bool UTPSPlayerHUDWidget::IsPlayerSpectating() const
+{
+    const auto Controller = GetOwningPlayer();
+    return Controller && Controller->GetStateName() == NAME_Spectating;
 }
