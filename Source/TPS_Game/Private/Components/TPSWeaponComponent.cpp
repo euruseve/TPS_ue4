@@ -198,9 +198,25 @@ bool UTPSWeaponComponent::CanEquip() const
     return !EquipAnimInProgress && !ReloadAnimInProgress;
 }
 
-void UTPSWeaponComponent::OnEmptyClip()
+void UTPSWeaponComponent::OnEmptyClip(ATPSBaseWeapon* AmmoEmptyWeapon)
 {
-    ChangeClip();
+    if (!AmmoEmptyWeapon)
+        return;
+
+    if (CurrentWeapon == AmmoEmptyWeapon)
+    {
+        ChangeClip();
+    }
+    else
+    {
+        for (const auto Weapon : Weapons)
+        {
+            if (Weapon == AmmoEmptyWeapon)
+            {
+                Weapon->ChangeClip();
+            }
+        }
+    }
 }
 
 void UTPSWeaponComponent::ChangeClip()
@@ -236,6 +252,19 @@ bool UTPSWeaponComponent::GetCurrentWeaponAmmoData(FAmmoData& AmmoData) const
     {
         AmmoData = CurrentWeapon->GetAmmoData();
         return true;
+    }
+
+    return false;
+}
+
+bool UTPSWeaponComponent::TryToAddAmmo(TSubclassOf<ATPSBaseWeapon> WeaponType, int32 ClipsAmount)
+{
+    for (const auto Weapon : Weapons)
+    {
+        if (Weapon && Weapon->IsA(WeaponType))
+        {
+            return Weapon->TryToAddAmmo(ClipsAmount);
+        }
     }
 
     return false;
