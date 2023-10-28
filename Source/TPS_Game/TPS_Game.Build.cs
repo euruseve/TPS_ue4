@@ -8,7 +8,15 @@ public class TPS_Game : ModuleRules
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
+        PublicDependencyModuleNames.AddRange(new string[]
+        { 
+            "Core",
+            "CoreUObject",
+            "Engine",
+            "InputCore",
+            "Niagara",
+            "PhysicsCore"
+        });
 
         PrivateDependencyModuleNames.AddRange(new string[] { });
 
@@ -17,6 +25,7 @@ public class TPS_Game : ModuleRules
           "TPS_Game/Public/Components",
           "TPS_Game/Public/Dev",
           "TPS_Game/Public/Weapon",
+          "TPS_Game/Public/Weapon/Components",
           "TPS_Game/Public/UI",
           "TPS_Game/Public/Animations",
           "TPS_Game/Public/Pickups"

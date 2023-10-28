@@ -1,4 +1,4 @@
-// Third Person Shooter. All Rights Reserved.
+    // Third Person Shooter. All Rights Reserved.
 
 #include "Player/TPSBaseCharacter.h"
 #include "Camera/CameraComponent.h"
@@ -45,6 +45,7 @@ void ATPSBaseCharacter::BeginPlay()
     check(HealthComponent);
     check(HealthTextComponent);
     check(GetCharacterMovement());
+    check(GetMesh());
 
     OnHealthChanged(HealthComponent->GetHealth());
     HealthComponent->OnDeath.AddUObject(this, &ATPSBaseCharacter::OnDeath);
@@ -123,7 +124,7 @@ void ATPSBaseCharacter::OnDeath()
 {
     UE_LOG(LogBaseCharacter, Display, TEXT("Player %s is dead"), *GetName());
 
-    PlayAnimMontage(DeathAnimMontage);
+    //PlayAnimMontage(DeathAnimMontage);
 
     GetCharacterMovement()->DisableMovement();
 
@@ -136,6 +137,9 @@ void ATPSBaseCharacter::OnDeath()
 
     GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
     WeaponComponent->StopFire();
+
+    GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+    GetMesh()->SetSimulatePhysics(true);
 }
 
 void ATPSBaseCharacter::OnHealthChanged(float Health)

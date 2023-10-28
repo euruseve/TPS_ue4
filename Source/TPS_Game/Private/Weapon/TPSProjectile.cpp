@@ -5,6 +5,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "DrawDebugHelpers.h"
 #include "Kismet/GameplayStatics.h"
+#include "Weapon/Components/TPSWeaponFXComponent.h"
 
 ATPSProjectile::ATPSProjectile()
 {
@@ -19,6 +20,8 @@ ATPSProjectile::ATPSProjectile()
     MovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>("ProjectileMovementComponent");
     MovementComponent->InitialSpeed = 2000.f;
     MovementComponent->ProjectileGravityScale = 0.1f;
+
+    WeaponFXComponent = CreateDefaultSubobject<UTPSWeaponFXComponent>("WeaponFXComponent");
 }
 
 void ATPSProjectile::BeginPlay()
@@ -27,10 +30,12 @@ void ATPSProjectile::BeginPlay()
 
     check(MovementComponent);
     check(CollisionComponent);
+    check(WeaponFXComponent);
 
     MovementComponent->Velocity = ShotDirection * MovementComponent->InitialSpeed;
     CollisionComponent->IgnoreActorWhenMoving(GetOwner(), true);
     CollisionComponent->OnComponentHit.AddDynamic(this, &ATPSProjectile::OnProjectileHit);
+    CollisionComponent->bReturnMaterialOnMove = true;
 
     SetLifeSpan(LifeSeconds);
 }
@@ -55,7 +60,9 @@ void ATPSProjectile::OnProjectileHit(UPrimitiveComponent* HitComponent, AActor* 
 
     DrawDebugSphere(GetWorld(), GetActorLocation(), DamageRadius, 24, FColor::Red, false, 5.f);
 
-    Destroy();
+    WeaponFXComponent->PlayImpactFX(Hit);
+
+    Destroy();  
 }
 
 AController* ATPSProjectile::GetController() const

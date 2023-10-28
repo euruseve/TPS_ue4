@@ -8,6 +8,8 @@
 
 class USphereComponent;
 class UProjectileMovementComponent;
+class UTPSWeaponFXComponent;
+
 
 UCLASS()
 class TPS_GAME_API ATPSProjectile : public AActor
@@ -25,6 +27,9 @@ protected:
 
     UPROPERTY(VisibleAnywhere, Category = "Weapon")
     UProjectileMovementComponent* MovementComponent;
+
+    UPROPERTY(VisibleAnywhere, Category = "VFX")
+    UTPSWeaponFXComponent* WeaponFXComponent;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
     float DamageRadius = 200.f;
