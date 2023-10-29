@@ -7,6 +7,7 @@
 #include "TPSCoreTypes.h"
 #include "TPSHealthComponent.generated.h"
 
+class UCameraShakeBase;
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class TPS_GAME_API UTPSHealthComponent : public UActorComponent
@@ -35,8 +36,8 @@ protected:
     float MaxHealth = 100.f;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Heal")
-    bool AutoHeal = true;    
-    
+    bool AutoHeal = true;
+
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Heal", meta = (EditCondition = "AutoHeal"))
     float HealUpdateTime = 1.f;
 
@@ -45,8 +46,10 @@ protected:
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Heal", meta = (EditCondition = "AutoHeal"))
     float HealModifier = 5.f;
-    
-    
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
+    TSubclassOf<UCameraShakeBase> CameraShake;
+
     virtual void BeginPlay() override;
 
 private:
@@ -61,4 +64,6 @@ private:
     void HealUpdate();
 
     void SetHealth(float NewHealth);
+
+    void PlayCameraShake();
 };

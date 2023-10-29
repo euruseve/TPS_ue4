@@ -47,7 +47,7 @@ void ATPSBaseCharacter::BeginPlay()
     check(GetCharacterMovement());
     check(GetMesh());
 
-    OnHealthChanged(HealthComponent->GetHealth());
+    OnHealthChanged(HealthComponent->GetHealth(), 0.f);
     HealthComponent->OnDeath.AddUObject(this, &ATPSBaseCharacter::OnDeath);
     HealthComponent->OnHealthChanged.AddUObject(this, &ATPSBaseCharacter::OnHealthChanged);
 }
@@ -142,7 +142,7 @@ void ATPSBaseCharacter::OnDeath()
     GetMesh()->SetSimulatePhysics(true);
 }
 
-void ATPSBaseCharacter::OnHealthChanged(float Health)
+void ATPSBaseCharacter::OnHealthChanged(float Health, float HealthDelta)
 {
     HealthTextComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), Health)));
 }

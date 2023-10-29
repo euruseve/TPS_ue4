@@ -7,6 +7,8 @@
 #include "TPSRifleWeapon.generated.h"
 
 class UTPSWeaponFXComponent;
+class UNiagaraComponent;
+class UNiagaraSystem;
 
 UCLASS()
 class TPS_GAME_API ATPSRifleWeapon : public ATPSBaseWeapon
@@ -31,6 +33,13 @@ protected:
     UPROPERTY(VisibleAnywhere, Category = "VFX")
     UTPSWeaponFXComponent* WeaponFXComponent;
 
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
+    UNiagaraSystem* TraceFX;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
+    FString TraceTargetName = "TraceTarget";
+
+
     virtual void BeginPlay() override;
     
     virtual void MakeShot() override;
@@ -39,5 +48,12 @@ protected:
 private:
     FTimerHandle ShotTimerHandle;
 
+    UPROPERTY()
+    UNiagaraComponent* MuzzleFXComponent;
+
     void MakeDamage(FHitResult& HitResult);
+
+    void InitMuzzleFX();
+    void SetMuzzleFXVisibility(bool Visible);
+    void SpawnTraceFX(const FVector& TraceStart, const FVector& TraceEnd);
 };

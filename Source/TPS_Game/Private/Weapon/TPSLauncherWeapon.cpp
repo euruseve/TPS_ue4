@@ -33,4 +33,6 @@ void ATPSLauncherWeapon::MakeShot()
     }
 
     DecreaseAmmo();
+
+    SpawnMuzzleFX();
 }
