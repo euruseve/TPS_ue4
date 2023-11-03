@@ -15,6 +15,8 @@ public class TPS_Game : ModuleRules
             "Engine",
             "InputCore",
             "Niagara",
+            "GameplayTasks",
+            "NavigationSystem",
             "PhysicsCore"
         });
 
@@ -28,6 +30,8 @@ public class TPS_Game : ModuleRules
           "TPS_Game/Public/Weapon/Components",
           "TPS_Game/Public/UI",
           "TPS_Game/Public/Animations",
+          "TPS_Game/Public/AI",
+          "TPS_Game/Public/AI/Tasks",
           "TPS_Game/Public/Pickups"
         });
 

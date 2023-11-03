@@ -4,7 +4,7 @@ class TPSUtils
 {
 public:
 	template<typename T> 
-	static T* GetTPSPlayerComponent(APawn* PlayerPawn)
+	static T* GetTPSPlayerComponent(AActor* PlayerPawn)
 	{
         if (!PlayerPawn)
             return nullptr;
