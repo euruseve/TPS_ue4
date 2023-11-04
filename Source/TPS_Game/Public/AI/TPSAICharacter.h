@@ -15,7 +15,10 @@ class TPS_GAME_API ATPSAICharacter : public ATPSBaseCharacter
 
 public:
     ATPSAICharacter(const FObjectInitializer& ObjInit);
-    
+
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI")
     UBehaviorTree* BehaviorTreeAsset;
+
+protected:
+    virtual void OnDeath() override;
 };

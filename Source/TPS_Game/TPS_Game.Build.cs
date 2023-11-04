@@ -32,6 +32,7 @@ public class TPS_Game : ModuleRules
           "TPS_Game/Public/Animations",
           "TPS_Game/Public/AI",
           "TPS_Game/Public/AI/Tasks",
+          "TPS_Game/Public/AI/Services",
           "TPS_Game/Public/Pickups"
         });
 

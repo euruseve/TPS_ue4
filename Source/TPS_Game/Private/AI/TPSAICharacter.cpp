@@ -3,8 +3,11 @@
 #include "AI/TPSAICharacter.h"
 #include "AI/TPSAIController.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/TPSAIWeaponComponent.h"
+#include "BrainComponent.h"
 
-ATPSAICharacter::ATPSAICharacter(const FObjectInitializer& ObjInit) : Super(ObjInit)
+ATPSAICharacter::ATPSAICharacter(const FObjectInitializer& ObjInit)
+    : Super(ObjInit.SetDefaultSubobjectClass<UTPSAIWeaponComponent>("WeaponComponent"))
 {
     AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
     AIControllerClass = ATPSAIController::StaticClass();
@@ -14,5 +17,15 @@ ATPSAICharacter::ATPSAICharacter(const FObjectInitializer& ObjInit) : Super(ObjI
     {
         GetCharacterMovement()->bUseControllerDesiredRotation = true;
         GetCharacterMovement()->RotationRate = FRotator(0.f, 200.f, 0.f);
+    }
+}
+
+void ATPSAICharacter::OnDeath(){
+    Super::OnDeath();
+
+    const auto TPSController = Cast<AAIController>(Controller);
+    if (TPSController && TPSController->BrainComponent)
+    {
+        TPSController->BrainComponent->Cleanup();
     }
 }

@@ -2,6 +2,7 @@
 
 #include "AI/TPSAIController.h"
 #include "AI/TPSAICharacter.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "Components/TPSAIPerceptionComponent.h"
 
 ATPSAIController::ATPSAIController()
@@ -25,6 +26,14 @@ void ATPSAIController::OnPossess(APawn* InPawn)
 void ATPSAIController::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
-    const auto AimActor = TPSAIPerceptionComponent->GetClosesEnemy();
+    const auto AimActor = GetFocusOnActor();
     SetFocus(AimActor);
+}
+
+AActor* ATPSAIController::GetFocusOnActor() const
+{
+    if (!GetBlackboardComponent())
+        return nullptr;
+
+    return Cast<AActor>(GetBlackboardComponent()->GetValueAsObject(FocusOnKeyName));
 }

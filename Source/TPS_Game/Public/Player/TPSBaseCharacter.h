@@ -50,7 +50,7 @@ protected:
     UPROPERTY(EditDefaultsOnly, Category = "Damage")
     FVector2D LandedDamage = FVector2D(10.f, 100.f);
 
-
+    virtual void OnDeath();
     virtual void BeginPlay() override;
 
 public:
@@ -74,7 +74,7 @@ private:
     void OnStartRunnig();
     void OnStopRunnig();
 
-    void OnDeath();
+   
     void OnHealthChanged(float Health, float HealthDelta);
 
     UFUNCTION()
