@@ -1,4 +1,4 @@
-    // Third Person Shooter. All Rights Reserved.
+// Third Person Shooter. All Rights Reserved.
 
 #include "Player/TPSBaseCharacter.h"
 #include "Camera/CameraComponent.h"
@@ -97,6 +97,15 @@ float ATPSBaseCharacter::GetMovementDirection() const
     return CrossProduct.IsZero() ? Degrees : Degrees * FMath::Sign(CrossProduct.Z);
 }
 
+void ATPSBaseCharacter::SetPlayerColor(const FLinearColor& Color)
+{
+    const auto MaterialInst = GetMesh()->CreateAndSetMaterialInstanceDynamic(0);
+    if (!MaterialInst)
+        return;
+
+    MaterialInst->SetVectorParameterValue(MaterialColorName, Color);
+}
+
 void ATPSBaseCharacter::MoveForward(float Amount)
 {
     bIsMovingForward = Amount > 0.f;
@@ -124,7 +133,7 @@ void ATPSBaseCharacter::OnDeath()
 {
     UE_LOG(LogBaseCharacter, Display, TEXT("Player %s is dead"), *GetName());
 
-    //PlayAnimMontage(DeathAnimMontage);
+    // PlayAnimMontage(DeathAnimMontage);
 
     GetCharacterMovement()->DisableMovement();
 

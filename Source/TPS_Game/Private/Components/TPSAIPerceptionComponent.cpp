@@ -28,8 +28,10 @@ AActor* UTPSAIPerceptionComponent::GetClosesEnemy() const
     {
         const auto HealthComponent = TPSUtils::GetTPSPlayerComponent<UTPSHealthComponent>(PercieveActor);
 
-        // TODO: check if enemies or not
-        if (HealthComponent && !HealthComponent->IsDead())
+        const auto PercievePawn = Cast<APawn>(PercieveActor);
+        const auto AreEnemies = PercievePawn && TPSUtils::AreEnemies(Controller, PercievePawn->Controller);
+
+        if (HealthComponent && !HealthComponent->IsDead() && AreEnemies)
         {
             const auto CurrentDistance = (PercieveActor->GetActorLocation() - Pawn->GetActorLocation()).Size();
 

@@ -9,6 +9,8 @@ ATPSAIController::ATPSAIController()
 {
     TPSAIPerceptionComponent = CreateDefaultSubobject<UTPSAIPerceptionComponent>("TPSPerceptionComponent");
     SetPerceptionComponent(*TPSAIPerceptionComponent);
+
+    bWantsPlayerState = true;
 }
 
 void ATPSAIController::OnPossess(APawn* InPawn)
