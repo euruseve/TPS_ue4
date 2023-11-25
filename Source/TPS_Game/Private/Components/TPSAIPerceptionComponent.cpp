@@ -1,4 +1,4 @@
-// Third Person Shooter. All Rights Reserved.
+﻿// Third Person Shooter. All Rights Reserved.
 
 #include "Components/TPSAIPerceptionComponent.h"
 #include "TPSUtils.h"

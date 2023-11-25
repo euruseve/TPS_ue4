@@ -19,9 +19,9 @@ public:
         if (!Controller1 || !Controller2 || Controller1 == Controller2)
             return false;
 
-        const auto PlayerState1 = Cast<ATPSPlayerState>(Controller1);
-        const auto PlayerState2 = Cast<ATPSPlayerState>(Controller2);
+        const auto PlayerState1 = Cast<ATPSPlayerState>(Controller1->PlayerState);
+        const auto PlayerState2 = Cast<ATPSPlayerState>(Controller2->PlayerState);
 
-        return PlayerState1 && PlayerState2 && (PlayerState1->GetTeamId() != PlayerState2->GetTeamId());
+        return PlayerState1 && PlayerState2 && PlayerState1->GetTeamId() != PlayerState2->GetTeamId();
     }
 };

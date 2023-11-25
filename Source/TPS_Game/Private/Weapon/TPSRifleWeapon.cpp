@@ -85,7 +85,7 @@ void ATPSRifleWeapon::MakeDamage(FHitResult& HitResult)
     if (!DamageActor)
         return;
 
-    DamageActor->TakeDamage(DamageAmount, FDamageEvent(), GetPlayerController(), this);
+    DamageActor->TakeDamage(DamageAmount, FDamageEvent(), GetController(), this);
 }
 
 void ATPSRifleWeapon::InitMuzzleFX() 
@@ -113,4 +113,10 @@ void ATPSRifleWeapon::SpawnTraceFX(const FVector& TraceStart, const FVector& Tra
     {
         TraceFXComponent->SetNiagaraVariableVec3(TraceTargetName, TraceEnd);
     }
+}
+
+AController* ATPSRifleWeapon::GetController() const
+{
+    const auto Pawn = Cast<APawn>(GetOwner());
+    return Pawn ? Pawn->GetController() : nullptr;
 }
