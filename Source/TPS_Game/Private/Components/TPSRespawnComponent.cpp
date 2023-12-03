@@ -19,6 +19,11 @@ void UTPSRespawnComponent::Respawn(int32 RespawnTime)
 
 }
 
+bool UTPSRespawnComponent::IsRespawningProgress() const
+{
+    return GetWorld() && GetWorld()->GetTimerManager().IsTimerActive(RespawnTimerHandle);
+}
+
 void UTPSRespawnComponent::RespawnTimerUpdate() {
     if (--RespawnCountDown == 0)
     {
