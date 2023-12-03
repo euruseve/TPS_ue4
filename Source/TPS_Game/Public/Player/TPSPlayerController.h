@@ -1,4 +1,4 @@
-// Third Person Shooter. All Rights Reserved. 
+// Third Person Shooter. All Rights Reserved.
 
 #pragma once
 
@@ -6,9 +6,17 @@
 #include "GameFramework/PlayerController.h"
 #include "TPSPlayerController.generated.h"
 
+class UTPSRespawnComponent;
 
 UCLASS()
 class TPS_GAME_API ATPSPlayerController : public APlayerController
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
+
+    public:
+    ATPSPlayerController();
+
+protected:
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+    UTPSRespawnComponent* RespawnComponent;
 };

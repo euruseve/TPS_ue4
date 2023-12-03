@@ -27,6 +27,8 @@ public:
     int32 GetCurrentRoundNum() { return CurrentRound; }
     int32 GetRoundSecondsRemaining() { return RoundCountDown; }
 
+    void RespawnRequest(AController* Controller);
+
 protected:
     UPROPERTY(EditDefaultsOnly, Category = "Game")
     TSubclassOf<AAIController> AIControllerClass;
@@ -54,4 +56,6 @@ private:
     void SetPlayerColor(AController* Controller);
 
     void LogPlayerInfo();
+
+    void StartRespawn(AController* Controller);
 };

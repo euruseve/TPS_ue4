@@ -5,9 +5,13 @@
 #include "Player/TPSBaseCharacter.h"
 #include "Player/TPSPlayerController.h"
 #include "UI/TPSGameHUD.h"
+#include "TPSUtils.h"
 #include "Player/TPSPlayerState.h"
+#include "Components/TPSRespawnComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogGameModeBase, All, All);
+
+constexpr static int32 MinRoundTimeForRespawn = 10;
 
 ATPSGameModeBase::ATPSGameModeBase()
 {
@@ -36,8 +40,6 @@ UClass* ATPSGameModeBase::GetDefaultPawnClassForController_Implementation(AContr
     }
     return Super::GetDefaultPawnClassForController_Implementation(InController);
 }
-
-
 
 void ATPSGameModeBase::SpawnBots()
 {
@@ -104,7 +106,7 @@ void ATPSGameModeBase::ResetOnePlayer(AController* Controller)
     SetPlayerColor(Controller);
 }
 
-void ATPSGameModeBase::CreateTeamsInfo() 
+void ATPSGameModeBase::CreateTeamsInfo()
 {
     if (!GetWorld())
         return;
@@ -125,7 +127,7 @@ void ATPSGameModeBase::CreateTeamsInfo()
         PlayerState->SetTeamColor(DetermineColorByTeamId(TeamId));
 
         SetPlayerColor(Controller);
-       //UE_LOG(LogGameModeBase, Warning, TEXT("Team id have been seted: %i"), TeamId);
+        // UE_LOG(LogGameModeBase, Warning, TEXT("Team id have been seted: %i"), TeamId);
 
         TeamId = TeamId == 1 ? 2 : 1;
     }
@@ -137,11 +139,12 @@ FLinearColor ATPSGameModeBase::DetermineColorByTeamId(int TeamId) const
     {
         return GameData.TeamColors[TeamId - 1];
     }
-    UE_LOG(LogGameModeBase, Warning, TEXT("No color for team id: %i, set to default: %s"), TeamId, *GameData.DefaultTeamColor.ToString());
+    UE_LOG(LogGameModeBase, Warning, TEXT("No color for team id: %i, set to default: %s"), TeamId,
+        *GameData.DefaultTeamColor.ToString());
     return GameData.DefaultTeamColor;
 }
 
-void ATPSGameModeBase::SetPlayerColor(AController* Controller) 
+void ATPSGameModeBase::SetPlayerColor(AController* Controller)
 {
     if (!Controller)
         return;
@@ -176,7 +179,7 @@ void ATPSGameModeBase::LogPlayerInfo()
     }
 }
 
-void ATPSGameModeBase::Killed(AController* KillerController, AController* VictimController) 
+void ATPSGameModeBase::Killed(AController* KillerController, AController* VictimController)
 {
     const auto KillerPlayerState = KillerController ? Cast<ATPSPlayerState>(KillerController->PlayerState) : nullptr;
     const auto VictimPlayerState = VictimController ? Cast<ATPSPlayerState>(VictimController->PlayerState) : nullptr;
@@ -190,5 +193,25 @@ void ATPSGameModeBase::Killed(AController* KillerController, AController* Victim
     {
         VictimPlayerState->AddDeath();
     }
+
+    StartRespawn(VictimController);
 }
 
+void ATPSGameModeBase::StartRespawn(AController* Controller)
+{
+    const auto RespawnAvailable = RoundCountDown > MinRoundTimeForRespawn + GameData.RespawnTime;
+    if (!RespawnAvailable)
+        return;
+
+
+    const auto RespawnComponent = TPSUtils::GetTPSPlayerComponent<UTPSRespawnComponent>(Controller);
+    if (!RespawnComponent)
+        return;
+
+    RespawnComponent->Respawn(GameData.RespawnTime);
+}
+
+void ATPSGameModeBase::RespawnRequest(AController* Controller)
+{
+    ResetOnePlayer(Controller);
+}
