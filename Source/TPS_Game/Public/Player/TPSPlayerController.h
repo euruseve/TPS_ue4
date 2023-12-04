@@ -19,4 +19,6 @@ class TPS_GAME_API ATPSPlayerController : public APlayerController
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
     UTPSRespawnComponent* RespawnComponent;
+
+    virtual void OnPossess(APawn* InPawn) override;
 };

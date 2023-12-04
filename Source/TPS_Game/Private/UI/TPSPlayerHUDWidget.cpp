@@ -7,6 +7,7 @@
 
 float UTPSPlayerHUDWidget::GetHealthPercent() const
 {
+    
     const auto HealthComponent = TPSUtils::GetTPSPlayerComponent<UTPSHealthComponent>(GetOwningPlayerPawn());
     if (!HealthComponent)
         return 0.f;
@@ -47,14 +48,24 @@ bool UTPSPlayerHUDWidget::IsPlayerSpectating() const
 
 bool UTPSPlayerHUDWidget::Initialize()
 {
-    const auto HealthComponent = TPSUtils::GetTPSPlayerComponent<UTPSHealthComponent>(GetOwningPlayerPawn());
-    if (HealthComponent)
+    if (GetOwningPlayer())
     {
-        HealthComponent->OnHealthChanged.AddUObject(this, &UTPSPlayerHUDWidget::OnHealthChanged);
+        GetOwningPlayer()->GetOnNewPawnNotifier().AddUObject(this, &UTPSPlayerHUDWidget::OnNewPawn);
+        OnNewPawn(GetOwningPlayerPawn());
     }
 
     return Super::Initialize();
 }
+
+void UTPSPlayerHUDWidget::OnNewPawn(APawn* NewPawn)
+{
+    const auto HealthComponent = TPSUtils::GetTPSPlayerComponent<UTPSHealthComponent>(NewPawn);
+    if (HealthComponent && !HealthComponent->OnHealthChanged.IsBoundToObject(this))
+    {
+        HealthComponent->OnHealthChanged.AddUObject(this, &UTPSPlayerHUDWidget::OnHealthChanged);
+    }
+}
+
 
 void UTPSPlayerHUDWidget::OnHealthChanged(float Health, float HealthDelta)
 {
@@ -63,3 +74,4 @@ void UTPSPlayerHUDWidget::OnHealthChanged(float Health, float HealthDelta)
         OnTakeDamage();
     }
 }
+
